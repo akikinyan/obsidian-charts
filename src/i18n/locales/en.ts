@@ -6,10 +6,6 @@ export const en = {
       name: 'Show Button in Context Menu',
       desc: 'If enabled, you will se a Button in your Editor Context Menu to open the Chart Creator.',
     },
-    donate: {
-      name: 'Donate',
-      desc: 'If you like this Plugin, consider donating to support continued development:',
-    },
     colorsHeading: 'Colors',
     colorsDesc: {
       body: 'Set the Colors for your Charts. This will set the border Color and the inner Color will be the same, but with less opacity. This ensures better compatibility with Dark and Light Mode. ',
