@@ -96,8 +96,13 @@ different even if you change nothing, because:
 
 - New `nodePadding` and `modeX` options were added, and the padding
   calculation around nodes changed.
-- What used to be called "link colors" are now called "flow colors".
-- Vertical orientation is now supported, in addition to horizontal.
+- Vertical orientation is now supported, in addition to horizontal
+  (`orientation: vertical`).
+- Several dataset options are new in 0.15 and simply did nothing on 0.12:
+  `flowColor` / `hoverFlowColor`, `alpha`, `nodeLabels` and `flowLabels`.
+  Nothing to migrate here — they were added during the 0.15 cycle (where
+  they were briefly named "link colors" before being renamed to "flow
+  colors"), so no 0.12 chart can have been using them.
 
 Options you were already relying on continue to work: `priority`,
 `colorFrom`, `colorTo`, and the `[from, flow, to]` triple form for data
