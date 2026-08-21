@@ -90,7 +90,7 @@ Chart.js 4 への更新版は、更新前と同じ型チェックを通過し、
 
 ## 謝辞
 
-このプラグイン本体は [phibr0](https://github.com/phibr0) 氏の作品である。このフォークが行っているのは依存ライブラリの更新とローカライズの追加のみで、本体の設計・実装は upstream に由来する。気に入った場合は [phibr0 の Ko-fi](https://ko-fi.com/phibr0) での支援を検討してほしい。
+このプラグイン本体は [phibr0](https://github.com/phibr0) 氏の作品である。このフォークが行っているのは依存ライブラリの更新とローカライズの追加のみで、本体の設計・実装は upstream に由来する。
 
 ---
 
@@ -102,4 +102,4 @@ This fork adds exactly two things on top of upstream: an upgrade from Chart.js 3
 
 It is not on the community plugin store; install it via [BRAT](https://github.com/TfTHacker/obsidian42-brat) using repository path `akikinyan/obsidian-charts`. Its plugin id is identical to the official plugin's, so BRAT will overwrite an existing official install (and vice versa) — test in a separate vault.
 
-Rendering in Obsidian has not been fully verified yet for the Chart.js 4 build, particularly sankey charts. All credit for the plugin itself goes to [phibr0](https://github.com/phibr0); support their work at [ko-fi.com/phibr0](https://ko-fi.com/phibr0).
+Rendering in Obsidian has not been fully verified yet for the Chart.js 4 build, particularly sankey charts. All credit for the plugin itself goes to [phibr0](https://github.com/phibr0).
