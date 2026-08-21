@@ -1,6 +1,7 @@
 import { Editor, Notice } from 'obsidian';
 import { Extractor } from "markdown-tables-to-json";
 import type { DataField } from 'src/constants/settingsConstants';
+import { t } from 'src/i18n';
 
 export async function chartFromTable(editor: Editor, layout: 'columns' | 'rows') {
     const {labels, dataFields} = generateTableData(editor.getSelection(), layout);
@@ -23,7 +24,7 @@ export function generateTableData(table: string, layout: 'columns' | 'rows', sel
     try {
         fields = Extractor.extractObject(table, layout, false);
     } catch (error) {
-        new Notice('Table malformed')
+        new Notice(t().notices.tableMalformed)
         throw error;
     }
     const labels = Object.keys(Object.values(fields)[0]);
