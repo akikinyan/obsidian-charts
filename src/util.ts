@@ -2,18 +2,20 @@ import chroma from "chroma-js";
 import type { App, Editor, TFile } from "obsidian";
 import type { ChartPluginSettings } from "src/constants/settingsConstants";
 import type Renderer from "src/chartRenderer";
+import { t } from "src/i18n";
 
 export function generateInnerColors(colors: string[], alpha = 0.25) {
-    if(typeof alpha != 'number') throw "Provided alpha value is not a number"
+    if(typeof alpha != 'number') throw t().errors.alphaNotANumber
     return colors.map((color: string) => chroma(color.trim()).alpha(alpha).hex());
 }
 
 export function renderError(error: any, el: HTMLElement) {
+    const strings = t();
     const errorEl = el.createDiv({ cls: "chart-error" });
-    errorEl.createEl("b", { text: "Couldn't render Chart:" });
+    errorEl.createEl("b", { text: strings.errors.couldNotRender });
     errorEl.createEl("pre").createEl("code", { text: error.toString?.() ?? error });
     errorEl.createEl("hr");
-    errorEl.createEl("span").innerHTML = "You might also want to look for further Errors in the Console: Press <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>I</kbd> to open it.";
+    errorEl.createEl("span").innerHTML = strings.errors.consoleHint;
 }
 
 export function base64ToArrayBuffer(base64: string) {

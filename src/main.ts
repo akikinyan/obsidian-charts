@@ -19,6 +19,7 @@ import { CreationHelperModal } from './ui/creationHelperModal';
 import { addIcons } from 'src/ui/icons';
 import { chartFromTable } from 'src/chartFromTable';
 import { renderError, saveImageToVaultAndPaste } from 'src/util';
+import { t } from 'src/i18n';
 
 export default class ChartPlugin extends Plugin {
   settings: ChartPluginSettings;
@@ -29,6 +30,7 @@ export default class ChartPlugin extends Plugin {
     el: HTMLElement,
     ctx: MarkdownPostProcessorContext
   ) => {
+    const strings = t();
     let data;
     try {
       data = await parseYaml(content.replace(/	/g, '    '));
@@ -38,7 +40,7 @@ export default class ChartPlugin extends Plugin {
     }
     if (!data.id) {
       if (!data || !data.type || !data.labels || !data.series) {
-        renderError('Missing type, labels or series', el);
+        renderError(strings.errors.missingFields, el);
         return;
       }
     }
@@ -97,6 +99,8 @@ export default class ChartPlugin extends Plugin {
   async onload() {
     console.log('loading plugin: Charts');
 
+    const strings = t();
+
     await this.loadSettings();
 
     addIcons();
@@ -110,7 +114,7 @@ export default class ChartPlugin extends Plugin {
 
     this.addCommand({
       id: 'creation-helper',
-      name: 'Insert new Chart',
+      name: strings.commands.insertNewChart,
       checkCallback: (checking: boolean) => {
         let leaf = this.app.workspace.activeLeaf;
         if (leaf.view instanceof MarkdownView) {
@@ -130,7 +134,7 @@ export default class ChartPlugin extends Plugin {
 
     this.addCommand({
       id: 'chart-from-table-column',
-      name: 'Create Chart from Table (Column oriented Layout)',
+      name: strings.commands.chartFromTableColumn,
       editorCheckCallback: (checking: boolean, editor: Editor, view: View) => {
         let selection = editor.getSelection();
         if (
@@ -149,7 +153,7 @@ export default class ChartPlugin extends Plugin {
 
     this.addCommand({
       id: 'chart-from-table-row',
-      name: 'Create Chart from Table (Row oriented Layout)',
+      name: strings.commands.chartFromTableRow,
       editorCheckCallback: (checking: boolean, editor: Editor, view: View) => {
         if (
           view instanceof MarkdownView &&
@@ -167,7 +171,7 @@ export default class ChartPlugin extends Plugin {
 
     this.addCommand({
       id: 'chart-to-svg',
-      name: 'Create Image from Chart',
+      name: strings.commands.chartToImage,
       editorCheckCallback: (checking: boolean, editor: Editor, view: View) => {
         if (
           view instanceof MarkdownView &&
@@ -175,7 +179,7 @@ export default class ChartPlugin extends Plugin {
           editor.getSelection().endsWith('```')
         ) {
           if (!checking) {
-            new Notice('Rendering Chart...');
+            new Notice(strings.notices.renderingChart);
             saveImageToVaultAndPaste(
               editor,
               this.app,
@@ -206,7 +210,7 @@ export default class ChartPlugin extends Plugin {
           if (view && this.settings.contextMenu) {
             menu.addItem((item) => {
               item
-                .setTitle('Insert Chart')
+                .setTitle(t().commands.contextMenuInsertChart)
                 .setIcon('chart')
                 .onClick((_) => {
                   new CreationHelperModal(

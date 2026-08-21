@@ -1,8 +1,10 @@
-import { Chart, ChartConfiguration, SankeyControllerDatasetOptions, registerables } from 'chart.js';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { SankeyController, Flow } from 'chartjs-chart-sankey';
+import type { SankeyControllerDatasetOptions } from 'chartjs-chart-sankey';
 import './date-adapter/chartjs-adapter-moment.esm.js';
 import { MarkdownPostProcessorContext, MarkdownRenderChild, parseYaml, TFile } from 'obsidian';
 import { generateInnerColors, renderError } from 'src/util';
+import { t } from 'src/i18n';
 import type { ImageOptions } from './constants/settingsConstants';
 import type ChartPlugin from 'src/main';
 import { generateTableData } from 'src/chartFromTable';
@@ -296,7 +298,7 @@ class ChartRenderChild extends MarkdownRenderChild {
                 const pos = this.renderer.plugin.app.metadataCache.getFileCache(
                     linkDest ?? this.renderer.plugin.app.vault.getAbstractFileByPath(this.ownPath) as TFile).sections.find(pre => pre.id === this.data.id)?.position;
                 if (!pos) {
-                    throw "Invalid id and/or file";
+                    throw t().errors.invalidId;
                 }
 
                 const tableString = (await this.renderer.plugin.app.vault.cachedRead(this.data.file ? linkDest : this.renderer.plugin.app.vault.getAbstractFileByPath(this.ownPath) as TFile)).substring(pos.start.offset, pos.end.offset);
@@ -304,7 +306,7 @@ class ChartRenderChild extends MarkdownRenderChild {
                 try {
                     tableData = generateTableData(tableString, this.data.layout ?? 'columns', this.data.select);
                 } catch (error) {
-                    throw "There is no table at that id and/or file"
+                    throw t().errors.noTableAtId
                 }
                 x.labels = tableData.labels;
                 for (let i = 0; tableData.dataFields.length > i; i++) {

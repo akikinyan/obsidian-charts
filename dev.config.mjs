@@ -19,6 +19,7 @@ esbuild.build({
     external: ['obsidian'],
     format: 'cjs',
     minify: true,
+    charset: "utf8",
     watch: true,
     logLevel: "info",
     plugins: [sveltePlugin({

@@ -13,6 +13,7 @@ import {
 } from 'obsidian';
 import type ChartPlugin from '../main';
 import Picker from 'vanilla-picker';
+import { t } from 'src/i18n';
 
 export class ChartSettingTab extends PluginSettingTab {
   plugin: ChartPlugin;
@@ -30,18 +31,17 @@ export class ChartSettingTab extends PluginSettingTab {
 
   display(): void {
     let { containerEl, plugin } = this;
+    const strings = t();
 
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: 'Settings - Charts' });
+    containerEl.createEl('h2', { text: strings.settings.title });
 
-    containerEl.createEl('h3', { text: 'General' });
+    containerEl.createEl('h3', { text: strings.settings.generalHeading });
 
     new Setting(containerEl)
-      .setName('Show Button in Context Menu')
-      .setDesc(
-        'If enabled, you will se a Button in your Editor Context Menu to open the Chart Creator.'
-      )
+      .setName(strings.settings.contextMenu.name)
+      .setDesc(strings.settings.contextMenu.desc)
       .addToggle((cb) => {
         cb.setValue(this.plugin.settings.contextMenu).onChange(
           async (value) => {
@@ -51,35 +51,32 @@ export class ChartSettingTab extends PluginSettingTab {
         );
       });
     new Setting(containerEl)
-      .setName('Donate')
-      .setDesc(
-        'If you like this Plugin, consider donating to support continued development:'
-      )
+      .setName(strings.settings.donate.name)
+      .setDesc(strings.settings.donate.desc)
       .addButton((bt) => {
         bt.buttonEl.outerHTML = `<a href="https://ko-fi.com/phibr0"><img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e11e22d8ff4a5b4a1b3346_Supportbutton-1.png"></a>`;
       });
 
     containerEl.createEl('h3', {
-      text: 'Colors',
+      text: strings.settings.colorsHeading,
       attr: {
         style: 'margin-bottom: 0',
       },
     });
     const desc = containerEl.createEl('p', { cls: 'setting-item-description' });
     desc.append(
-      'Set the Colors for your Charts. This will set the border Color and the inner Color will be the same, but with less opacity. This ensures better compatibility with Dark and Light Mode. ',
-      'You can use any ',
+      strings.settings.colorsDesc.body,
+      strings.settings.colorsDesc.linkLead,
       desc.createEl('a', {
         href: 'https://www.w3schools.com/cssref/css_colors.asp',
-        text: 'valid CSS Color.',
-      })
+        text: strings.settings.colorsDesc.linkText,
+      }),
+      strings.settings.colorsDesc.linkTail
     );
 
     new Setting(containerEl)
-      .setName('Enable Theme Colors')
-      .setDesc(
-        'If your Obsidian Theme (or snippet) provides Colors you can use them instead.'
-      )
+      .setName(strings.settings.themeColors.name)
+      .setDesc(strings.settings.themeColors.desc)
       .addToggle((cb) => {
         cb.setValue(plugin.settings.themeable).onChange(async (value) => {
           plugin.settings.themeable = value;
@@ -92,14 +89,12 @@ export class ChartSettingTab extends PluginSettingTab {
       plugin.settings.colors.forEach((color, idx) => {
         const nameEl = document.createDocumentFragment();
         nameEl.createSpan({ text: '●', attr: { style: `color: ${color}` } });
-        nameEl.appendText(` Color #${idx + 1}`);
+        nameEl.appendText(' ' + strings.settings.color.name(idx + 1));
         new Setting(containerEl)
           .setName(nameEl)
-          .setDesc(
-            'This will be the border Color used in the Charts you create.'
-          )
+          .setDesc(strings.settings.color.desc)
           .addButton((btn) => {
-            btn.setButtonText('Change Color');
+            btn.setButtonText(strings.settings.color.change);
             new Picker({
               parent: btn.buttonEl,
               onDone: async (color) => {
@@ -115,7 +110,7 @@ export class ChartSettingTab extends PluginSettingTab {
           .addExtraButton((btn) => {
             btn
               .setIcon('trash')
-              .setTooltip('Remove')
+              .setTooltip(strings.settings.color.remove)
               .onClick(async () => {
                 this.plugin.settings.colors.remove(color);
                 await this.plugin.saveSettings();
@@ -128,7 +123,7 @@ export class ChartSettingTab extends PluginSettingTab {
           .addExtraButton((btn) => {
             btn
               .setIcon('reset')
-              .setTooltip('Reset to default')
+              .setTooltip(strings.settings.color.reset)
               .onClick(async () => {
                 this.plugin.settings.colors[idx] =
                   DEFAULT_SETTINGS.colors[idx] ?? '#ffffff';
@@ -139,7 +134,7 @@ export class ChartSettingTab extends PluginSettingTab {
       });
 
       new Setting(containerEl).addButton((btn) => {
-        btn.setButtonText('Add Color').onClick(async () => {
+        btn.setButtonText(strings.settings.color.add).onClick(async () => {
           this.plugin.settings.colors.push('#ffffff');
           await this.plugin.saveSettings();
           this.display();
@@ -147,10 +142,10 @@ export class ChartSettingTab extends PluginSettingTab {
       });
     }
 
-    containerEl.createEl('h3', { text: 'Chart to Image Converter' });
+    containerEl.createEl('h3', { text: strings.settings.imageHeading });
 
     const detailEl = containerEl.createEl('details');
-    detailEl.createEl('summary', { text: 'How to use' });
+    detailEl.createEl('summary', { text: strings.settings.imageHowToUse });
     detailEl.createEl('img', {
       attr: {
         src: 'https://media.discordapp.net/attachments/855181471643861002/897811615037136966/charttoimage.gif',
@@ -158,8 +153,8 @@ export class ChartSettingTab extends PluginSettingTab {
     });
 
     new Setting(containerEl)
-      .setName('Image Format')
-      .setDesc('The Format to be used, when generating a Image from a Chart.')
+      .setName(strings.settings.imageFormat.name)
+      .setDesc(strings.settings.imageFormat.desc)
       .addDropdown((cb) => {
         cb.addOptions({
           'image/jpeg': 'jpeg',
@@ -173,8 +168,8 @@ export class ChartSettingTab extends PluginSettingTab {
         });
       });
     new Setting(containerEl)
-      .setName('Image Quality')
-      .setDesc('If using a lossy format, set the Image Quality.')
+      .setName(strings.settings.imageQuality.name)
+      .setDesc(strings.settings.imageQuality.desc)
       .addSlider((cb) => {
         cb.setDynamicTooltip()
           .setLimits(0.01, 1, 0.01)

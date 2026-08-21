@@ -6,9 +6,12 @@
   import { renderError } from "src/util";
   import type { DataField } from "src/constants/settingsConstants";
 import type { Chart } from "chart.js";
+  import { t } from '../i18n';
 
   export let editor: Editor;
   export let renderer: Renderer;
+
+  const strings = t();
 
   const dispatch = createEventDispatcher();
 
@@ -72,14 +75,14 @@ bestFitNumber: ${bestFitNumber}`;
 </script>
 
 <div class="chart-modal">
-  <h3>Create a new Chart</h3>
+  <h3>{strings.helper.title}</h3>
   <div class="modalColumn">
     <div>
       <table style="width:100%">
         <tr>
           <td class="desc"
-            ><p class="mainDesc">Chart Type</p>
-            <p class="subDesc">Choose a Chart Type</p></td
+            ><p class="mainDesc">{strings.helper.chartType.name}</p>
+            <p class="subDesc">{strings.helper.chartType.desc}</p></td
           ><td class="controlElement"
             ><select
               name="Chart Types"
@@ -87,19 +90,19 @@ bestFitNumber: ${bestFitNumber}`;
               class="dropdown"
               bind:value={chartType}
             >
-              <option value="bar">Bar</option>
-              <option value="line">Line</option>
-              <option value="pie">Pie</option>
-              <option value="doughnut">Doughnut</option>
-              <option value="radar">Radar</option>
-              <option value="polarArea">Polar Area</option>
+              <option value="bar">{strings.helper.chartType.options.bar}</option>
+              <option value="line">{strings.helper.chartType.options.line}</option>
+              <option value="pie">{strings.helper.chartType.options.pie}</option>
+              <option value="doughnut">{strings.helper.chartType.options.doughnut}</option>
+              <option value="radar">{strings.helper.chartType.options.radar}</option>
+              <option value="polarArea">{strings.helper.chartType.options.polarArea}</option>
             </select></td
           >
         </tr>
         <tr>
           <td class="desc"
-            ><p class="mainDesc">Smoothness</p>
-            <p class="subDesc">Changes the smoothness of the Chart</p></td
+            ><p class="mainDesc">{strings.helper.smoothness.name}</p>
+            <p class="subDesc">{strings.helper.smoothness.desc}</p></td
           ><td class="controlElement"
             ><input
               type="range"
@@ -112,8 +115,8 @@ bestFitNumber: ${bestFitNumber}`;
         </tr>
         <tr>
           <td class="desc"
-            ><p class="mainDesc">Width</p>
-            <p class="subDesc">Changes the horizontal width</p></td
+            ><p class="mainDesc">{strings.helper.width.name}</p>
+            <p class="subDesc">{strings.helper.width.desc}</p></td
           ><td class="controlElement"
             ><input
               type="range"
@@ -126,8 +129,8 @@ bestFitNumber: ${bestFitNumber}`;
         </tr>
         <tr>
           <td class="desc"
-            ><p class="mainDesc">Fill</p>
-            <p class="subDesc">Fill the underside of the Chart</p></td
+            ><p class="mainDesc">{strings.helper.fill.name}</p>
+            <p class="subDesc">{strings.helper.fill.desc}</p></td
           ><td class="controlElement"
             ><input
               type="checkbox"
@@ -139,8 +142,8 @@ bestFitNumber: ${bestFitNumber}`;
         </tr>
         <tr>
           <td class="desc"
-            ><p class="mainDesc">Distinct Colors</p>
-            <p class="subDesc">Use distinct Colors for each Label</p></td
+            ><p class="mainDesc">{strings.helper.distinctColors.name}</p>
+            <p class="subDesc">{strings.helper.distinctColors.desc}</p></td
           ><td class="controlElement"
             ><input
               type="checkbox"
@@ -152,8 +155,8 @@ bestFitNumber: ${bestFitNumber}`;
         </tr>
         <tr>
           <td class="desc"
-            ><p class="mainDesc">Start at Zero</p>
-            <p class="subDesc">Don't cut the graph at the bottom</p></td
+            ><p class="mainDesc">{strings.helper.startAtZero.name}</p>
+            <p class="subDesc">{strings.helper.startAtZero.desc}</p></td
           ><td class="controlElement"
             ><input
               type="checkbox"
@@ -168,13 +171,13 @@ bestFitNumber: ${bestFitNumber}`;
       <table style="width:100%">
         <tr>
           <td class="desc"
-            ><p class="mainDesc">X Axis</p>
-            <p class="subDesc">Set Labels (Comma seperated)</p></td
+            ><p class="mainDesc">{strings.helper.xAxis.name}</p>
+            <p class="subDesc">{strings.helper.xAxis.desc}</p></td
           >
           <td class="controlElement">
             <input
               type="text"
-              placeholder="Monday, Tuesday, ..."
+              placeholder={strings.helper.xAxis.placeholder}
               bind:value={labels}
             /><br />
           </td>
@@ -185,15 +188,15 @@ bestFitNumber: ${bestFitNumber}`;
         {#each data as d, i}
           <tr>
             <td class="desc"
-              ><p class="mainDesc">Y Axis</p>
-              <p class="subDesc">Set Data Fields (Comma seperated)</p></td
+              ><p class="mainDesc">{strings.helper.yAxis.name}</p>
+              <p class="subDesc">{strings.helper.yAxis.desc}</p></td
             >
             <td class="controlElement">
-              <input type="text" placeholder="Name" bind:value={d.dataTitle} />
+              <input type="text" placeholder={strings.helper.yAxis.namePlaceholder} bind:value={d.dataTitle} />
               <br />
               <input
                 type="text"
-                placeholder="1, -2, 11, 5"
+                placeholder={strings.helper.yAxis.dataPlaceholder}
                 style="margin-top: 3px;"
                 bind:value={d.data}
               />
@@ -203,18 +206,18 @@ bestFitNumber: ${bestFitNumber}`;
         <div class="addMoreButtonContainer">
           <button
             on:click={() => (data = [...data, { data: "", dataTitle: "" }])}
-            >Add more</button
+            >{strings.helper.addMore}</button
           >
         </div>
       </table>
       <hr />
-      <CollapsibleSection headerText={'Line of Best Fit (Line chart only)'} >
+      <CollapsibleSection headerText={strings.helper.bestFitSection} >
         <hr>
       <table style="width:100%">
         <tr>
           <td class="desc"
-          ><p class="mainDesc">Line of Best Fit</p>
-            <p class="subDesc">Create a line of best fit</p></td
+          ><p class="mainDesc">{strings.helper.bestFit.name}</p>
+            <p class="subDesc">{strings.helper.bestFit.desc}</p></td
           ><td class="controlElement"
         ><input
                 type="checkbox"
@@ -226,24 +229,24 @@ bestFitNumber: ${bestFitNumber}`;
         </tr>
         <tr>
           <td class="desc"
-          ><p class="mainDesc">Best Fit Line ID</p>
-            <p class="subDesc">The line ID used to create the line of best fit</p></td
+          ><p class="mainDesc">{strings.helper.bestFitId.name}</p>
+            <p class="subDesc">{strings.helper.bestFitId.desc}</p></td
           ><td class="controlElement"
         ><input
                 type="text"
-                placeholder="0"
+                placeholder={strings.helper.bestFitId.placeholder}
                 style="width: 26px; height: 32px"
                 bind:value={bestFitNumber}
         /><br />
         </tr>
         <tr>
           <td class="desc"
-          ><p class="mainDesc">Line of Best Fit Title</p>
-            <p class="subDesc">The title for the line of best fit</p></td
+          ><p class="mainDesc">{strings.helper.bestFitTitle.name}</p>
+            <p class="subDesc">{strings.helper.bestFitTitle.desc}</p></td
           ><td class="controlElement">
           <input
                   type="text"
-                  placeholder="Line of Best Fit"
+                  placeholder={strings.helper.bestFitTitle.placeholder}
                   style="width: 96px; height: 32px"
                   bind:value={bestFitTitle}
           /><br />
@@ -258,7 +261,7 @@ bestFitNumber: ${bestFitNumber}`;
   <hr />
 </div>
 <div style="display: flex; justify-content: center; align-items: center;">
-  <button class="mod-cta" on:click={insertChart}>Insert Chart</button>
+  <button class="mod-cta" on:click={insertChart}>{strings.helper.insertChart}</button>
 </div>
 
 <style>

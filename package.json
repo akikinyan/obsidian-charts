@@ -1,6 +1,6 @@
 {
     "name": "obsidian-charts",
-    "version": "3.9.0-brat.1",
+    "version": "4.0.0",
     "description": "This Plugin lets you create Charts within Obsidian",
     "main": "main.js",
     "scripts": {
@@ -29,13 +29,13 @@
         "typescript": "^4.2.4"
     },
     "dependencies": {
-        "chart.js": "^3.9.1",
-        "chartjs-chart-sankey": "^0.12.0",
+        "chart.js": "^4.5.1",
+        "chartjs-chart-sankey": "^0.15.0",
         "chroma-js": "^2.1.2",
         "markdown-tables-to-json": "^0.1.7",
         "svelte": "^3.35.0",
         "vanilla-picker": "^2.11.2",
-        "chartjs-plugin-annotation": "^2.2.1"
+        "chartjs-plugin-annotation": "^3.1.0"
     },
     "moduleFileExtensions": [
         "js",

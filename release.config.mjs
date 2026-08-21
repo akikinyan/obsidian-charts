@@ -19,6 +19,7 @@ esbuild.build({
     external: ['obsidian', 'moment'],
     format: 'cjs',
     minify: true,
+    charset: "utf8",
     watch: false,
     logLevel: "info",
     treeShaking: true,
