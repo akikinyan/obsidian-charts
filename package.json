@@ -1,11 +1,12 @@
 {
     "name": "obsidian-charts",
-    "version": "3.9.0",
+    "version": "3.9.0-brat.1",
     "description": "This Plugin lets you create Charts within Obsidian",
     "main": "main.js",
     "scripts": {
         "dev": "node dev.config.mjs",
-        "build": "node release.config.mjs"
+        "build": "node release.config.mjs",
+        "typecheck": "tsc --noEmit"
     },
     "keywords": [],
     "author": "phibr0",
