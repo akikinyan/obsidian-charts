@@ -1,5 +1,6 @@
-import { Chart, ChartConfiguration, SankeyControllerDatasetOptions, registerables } from 'chart.js';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { SankeyController, Flow } from 'chartjs-chart-sankey';
+import type { SankeyControllerDatasetOptions } from 'chartjs-chart-sankey';
 import './date-adapter/chartjs-adapter-moment.esm.js';
 import { MarkdownPostProcessorContext, MarkdownRenderChild, parseYaml, TFile } from 'obsidian';
 import { generateInnerColors, renderError } from 'src/util';
