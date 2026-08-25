@@ -4,6 +4,13 @@ import type { SankeyControllerDatasetOptions } from 'chartjs-chart-sankey';
 import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
 import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
 import { WordCloudController, WordElement } from 'chartjs-chart-wordcloud';
+import { BoxPlotController, ViolinController, BoxAndWiskers, Violin } from '@sgratzl/chartjs-chart-boxplot';
+import {
+    BarWithErrorBarsController, LineWithErrorBarsController,
+    ScatterWithErrorBarsController, PolarAreaWithErrorBarsController,
+    BarWithErrorBar, PointWithErrorBar, ArcWithErrorBar,
+} from 'chartjs-chart-error-bars';
+import { VennDiagramController, EulerDiagramController, ArcSlice } from 'chartjs-chart-venn';
 import './date-adapter/chartjs-adapter-moment.esm.js';
 import { MarkdownPostProcessorContext, MarkdownRenderChild, parseYaml, TFile } from 'obsidian';
 import { generateInnerColors, renderError } from 'src/util';
@@ -17,13 +24,18 @@ Chart.register(
     ...registerables,
     annotationPlugin,
     SankeyController, Flow,
-    // These three come from separate community plugins. They are meant to be used
-    // from `advanced-chart` blocks or window.renderChart, not from `chart` YAML:
-    // datasetPrep() forces backgroundColor/borderColor/fill/tension onto every
-    // dataset, which fights with how they colour their elements.
+    // The types below come from separate community plugins. They are meant to be
+    // used from `advanced-chart` blocks or window.renderChart, not from `chart`
+    // YAML: datasetPrep() forces backgroundColor/borderColor/fill/tension onto
+    // every dataset, which fights with how they colour their elements.
     MatrixController, MatrixElement,
     TreemapController, TreemapElement,
     WordCloudController, WordElement,
+    BoxPlotController, ViolinController, BoxAndWiskers, Violin,
+    BarWithErrorBarsController, LineWithErrorBarsController,
+    ScatterWithErrorBarsController, PolarAreaWithErrorBarsController,
+    BarWithErrorBar, PointWithErrorBar, ArcWithErrorBar,
+    VennDiagramController, EulerDiagramController, ArcSlice,
 );
 
 // I need to refactor this

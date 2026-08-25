@@ -1,9 +1,12 @@
 # Extra Chart Types
 
-This fork bundles three additional Chart.js community plugins on top of the
+This fork bundles six additional Chart.js community plugins on top of the
 chart types listed on the [Types](index) page: `matrix`
-(from `chartjs-chart-matrix`), `treemap` (from `chartjs-chart-treemap`) and
-`wordCloud` (from `chartjs-chart-wordcloud`).
+(from `chartjs-chart-matrix`), `treemap` (from `chartjs-chart-treemap`),
+`wordCloud` (from `chartjs-chart-wordcloud`), `boxplot` and `violin` (from
+`@sgratzl/chartjs-chart-boxplot`), `barWithErrorBars`, `lineWithErrorBars` and
+`scatterWithErrorBars` (from `chartjs-chart-error-bars`), and `venn` and
+`euler` (from `chartjs-chart-venn`).
 
 These types are **only available in this fork**. They are not registered in
 upstream [`phibr0/obsidian-charts`](https://github.com/phibr0/obsidian-charts),
@@ -14,8 +17,9 @@ so notes that use them will not render there.
 You cannot use the normal ` ```chart ` YAML block for these types. When the
 plugin processes a `chart` block, its `datasetPrep()` step injects
 `backgroundColor`, `borderColor`, `fill` and `tension` into every dataset,
-which conflicts with how `matrix`, `treemap` and `wordCloud` expect their
-datasets to be shaped.
+which conflicts with how `matrix`, `treemap`, `wordCloud`, `boxplot`,
+`violin`, `barWithErrorBars`, `lineWithErrorBars`, `scatterWithErrorBars`,
+`venn` and `euler` expect their datasets to be shaped.
 
 Instead, write these charts with one of the two raw Chart.js code paths:
 
@@ -175,3 +179,113 @@ useful for visualizing tag or word frequency across a set of notes.
 
 The words themselves go in the top-level `labels` array, and the dataset's
 `data` array gives the size for each word, matched up by position.
+
+## Box Plot
+
+A `boxplot` chart summarizes the distribution of a set of numbers, useful
+for comparing spreads of some measurement across notes, such as hours
+logged per month.
+
+````json
+```advanced-chart
+{
+  "type": "boxplot",
+  "data": {
+    "labels": ["Apr", "May", "Jun"],
+    "datasets": [{
+      "label": "Daily work hours",
+      "data": [[2,3,3,4,5,5,6,8], [1,2,4,4,5,6,6,7], [3,4,5,5,6,7,8,9]],
+      "backgroundColor": "rgba(255, 99, 132, 0.4)",
+      "borderColor": "rgba(255, 99, 132, 1)",
+      "borderWidth": 1
+    }]
+  },
+  "options": { "scales": { "y": { "beginAtZero": true } } }
+}
+```
+````
+
+Each element of the dataset's `data` array is not a single number but the
+raw array of numbers for one group — one array per label. The library
+computes the quartiles, median, whiskers and outliers from those raw values
+itself; you don't calculate any of that.
+
+Changing `"type"` to `"violin"` produces a violin plot from the same data
+shape and the same library — it draws each group's estimated distribution
+as a symmetric shape instead of a box.
+
+## Bar with Error Bars
+
+A `barWithErrorBars` chart draws a bar chart where each bar also shows a
+range above and below its value, useful for plotting a mean alongside its
+uncertainty.
+
+````json
+```advanced-chart
+{
+  "type": "barWithErrorBars",
+  "data": {
+    "labels": ["Condition A", "Condition B", "Condition C"],
+    "datasets": [{
+      "label": "Mean ± error",
+      "data": [
+        {"y": 10, "yMin": 8,  "yMax": 12},
+        {"y": 15, "yMin": 13, "yMax": 18},
+        {"y": 7,  "yMin": 5,  "yMax": 9}
+      ],
+      "backgroundColor": "rgba(54, 162, 235, 0.5)",
+      "borderColor": "rgba(54, 162, 235, 1)",
+      "borderWidth": 1
+    }]
+  },
+  "options": { "scales": { "y": { "beginAtZero": true } } }
+}
+```
+````
+
+Instead of a plain number, each point in the dataset's `data` array is an
+object with `y`, `yMin` and `yMax`: `y` is the bar's height, and `yMin` /
+`yMax` set the top and bottom of the error bar drawn on top of it.
+
+`lineWithErrorBars` and `scatterWithErrorBars` come from the same library
+and use the same point shape. For the scatter variant, points also take
+`x`, `xMin` and `xMax`, since a scatter chart has no category axis to place
+the point on.
+
+## Venn Diagram
+
+A `venn` chart draws overlapping circles sized and positioned to show how
+several sets and their intersections relate, useful for comparing groups of
+notes by shared tags or properties.
+
+````json
+```advanced-chart
+{
+  "type": "venn",
+  "data": {
+    "labels": ["Read", "Summarized", "Read ∩ Summarized"],
+    "datasets": [{
+      "label": "Notes",
+      "data": [
+        {"sets": ["Read"], "value": 12},
+        {"sets": ["Summarized"], "value": 8},
+        {"sets": ["Read", "Summarized"], "value": 5}
+      ],
+      "backgroundColor": "rgba(153, 102, 255, 0.3)",
+      "borderColor": "rgba(153, 102, 255, 1)"
+    }]
+  },
+  "options": { "plugins": { "legend": { "display": false } } }
+}
+```
+````
+
+Each entry in the dataset's `data` array names the sets it belongs to in a
+`sets` array, plus a `value` giving its size. An entry that lists only one
+set name is that set's total; an entry that lists more than one set name is
+the intersection of those sets.
+
+Changing `"type"` to `"euler"` produces an area-proportional Euler diagram
+from the same library and the same data shape — unlike a Venn diagram,
+region area is scaled to match `value`, and sets with no overlap are drawn
+as non-overlapping circles.
