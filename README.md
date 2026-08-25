@@ -7,9 +7,10 @@
 このフォークは Obsidian の公式コミュニティプラグイン一覧には登録していない。[BRAT](https://github.com/TfTHacker/obsidian42-brat) 経由でのテスト配布のみを行っている。
 
 > [!IMPORTANT]
-> このフォークで upstream から変更したのは次の2点のみである。
+> このフォークで upstream から変更したのは次の3点である。
 > 1. Chart.js を 3.9.1 → 4.5.1 に更新（依存ライブラリの更新を含む）
 > 2. 設定画面・コマンド等の日本語ローカライズ
+> 3. チャート種の追加（ヒートマップ、ツリーマップ、ワードクラウド）
 >
 > 詳細は以下の各節を参照。
 
@@ -22,11 +23,12 @@
 3. リポジトリパスに `akikinyan/obsidian-charts` を入力し、試したいリリースタグを選ぶ。
 4. コミュニティプラグイン一覧で **Charts** を有効化する。
 
-配布しているタグは次の2つ。
+主なタグは次のとおり。
 
 | タグ | 内容 |
 | --- | --- |
-| `4.0.0-beta.1` | Chart.js 4 版のビルド |
+| `4.1.0` | 最新。チャート種の追加を含む |
+| `4.0.1` | Chart.js 4 化と日本語ローカライズ |
 | `3.9.0-brat.1` | Chart.js 3.9.1 のままの upstream 未改変コード。比較用のベースラインとして配布 |
 
 > [!WARNING]
@@ -50,6 +52,31 @@ Chart.js を 4.5.1 に上げ、あわせて `chartjs-chart-sankey` を 0.12 → 
 > なお、単純な `grid: { color: ... }` は変更していない。
 >
 > 詳細と網羅的な対応表は [`docusaurus/docs/Chart.js v4 Migration.md`](./docusaurus/docs/Chart.js%20v4%20Migration.md) を参照。
+
+## チャート種の追加
+
+Chart.js のコミュニティプラグインを 3 つ同梱し、次の種類を使えるようにした。
+
+| type | 内容 | ライブラリ |
+| --- | --- | --- |
+| `matrix` | ヒートマップ | `chartjs-chart-matrix` |
+| `treemap` | ツリーマップ | `chartjs-chart-treemap` |
+| `wordCloud` | ワードクラウド | `chartjs-chart-wordcloud` |
+
+> [!IMPORTANT]
+> これらは通常の `chart` ブロック（YAML）では使えない。`datasetPrep()` が全データセットに
+> `backgroundColor` / `borderColor` / `fill` / `tension` を差し込むため、これらのチャート種と
+> 競合する。`advanced-chart` ブロック（生の JSON）か、`dataviewjs` からの `window.renderChart`
+> を使う。
+>
+> `advanced-chart` は `JSON.parse` で読むため関数が書けない。値に応じて色を変える
+> （ヒートマップの濃淡など）には `dataviewjs` 側で書く必要がある。
+
+書き方とサンプルは [Extra Chart Types](./docusaurus/docs/Chart%20Types/Extra%20Chart%20Types.mdx) にある。
+
+Chart.js 4 化そのものではチャート種は増えていない（v3 と v4 で組み込みの 8 種類は同一）。
+上記は別途ライブラリを追加したことによるもので、うち `wordCloud` は Chart.js 4 を必須とするため
+今回の更新で初めて使えるようになった。
 
 ## UIの日本語ローカライズ
 
@@ -98,7 +125,7 @@ Chart.js 4 への更新版は、更新前と同じ型チェックを通過し、
 
 This is a fork of [phibr0/obsidian-charts](https://github.com/phibr0/obsidian-charts) (plugin id `obsidian-charts`), maintained at `akikinyan/obsidian-charts`. It renders Chart.js charts from `chart` and `advanced-chart` code blocks in Obsidian, same as upstream, whose last release was 3.9.0 (January 2024).
 
-This fork adds exactly two things on top of upstream: an upgrade from Chart.js 3.9.1 to 4.5.1 (with the matching `chartjs-chart-sankey` and `chartjs-plugin-annotation` bumps, which renames a few scale options — see [`docusaurus/docs/Chart.js v4 Migration.md`](./docusaurus/docs/Chart.js%20v4%20Migration.md)), and Japanese/English UI localisation for the settings, commands, and modal.
+This fork adds three things on top of upstream: an upgrade from Chart.js 3.9.1 to 4.5.1 (with the matching `chartjs-chart-sankey` and `chartjs-plugin-annotation` bumps, which renames a few scale options — see [`docusaurus/docs/Chart.js v4 Migration.md`](./docusaurus/docs/Chart.js%20v4%20Migration.md)); Japanese/English UI localisation for the settings, commands, and modal; and three extra chart types — `matrix` (heatmap), `treemap` and `wordCloud` — usable from `advanced-chart` blocks or the `window.renderChart` API.
 
 It is not on the community plugin store; install it via [BRAT](https://github.com/TfTHacker/obsidian42-brat) using repository path `akikinyan/obsidian-charts`. Its plugin id is identical to the official plugin's, so BRAT will overwrite an existing official install (and vice versa) — test in a separate vault.
 

@@ -1,0 +1,177 @@
+# Extra Chart Types
+
+This fork bundles three additional Chart.js community plugins on top of the
+chart types listed on the [Types](index) page: `matrix`
+(from `chartjs-chart-matrix`), `treemap` (from `chartjs-chart-treemap`) and
+`wordCloud` (from `chartjs-chart-wordcloud`).
+
+These types are **only available in this fork**. They are not registered in
+upstream [`phibr0/obsidian-charts`](https://github.com/phibr0/obsidian-charts),
+so notes that use them will not render there.
+
+## How to write these charts
+
+You cannot use the normal ` ```chart ` YAML block for these types. When the
+plugin processes a `chart` block, its `datasetPrep()` step injects
+`backgroundColor`, `borderColor`, `fill` and `tension` into every dataset,
+which conflicts with how `matrix`, `treemap` and `wordCloud` expect their
+datasets to be shaped.
+
+Instead, write these charts with one of the two raw Chart.js code paths:
+
+- An ` ```advanced-chart ` code block, whose body is raw JSON.
+- The `window.renderChart` API called from a `dataviewjs` block, as described
+  on the [Dataview Integration](/Dataview%20Integration) page.
+
+:::caution
+
+The `advanced-chart` block is parsed with `JSON.parse`, so **scriptable
+options (functions) cannot be used there**. Anything that colors a chart
+based on its data values — which is most of the point of a heatmap — needs a
+function like `backgroundColor: (ctx) => ...`, so it can only be written in a
+`dataviewjs` block, not in `advanced-chart`.
+
+:::
+
+## Matrix
+
+A `matrix` chart draws a grid of colored cells, useful for a heatmap of
+activity across a note, for example how much was written per day and time of
+day.
+
+````json
+```advanced-chart
+{
+  "type": "matrix",
+  "data": {
+    "datasets": [{
+      "label": "Activity",
+      "data": [
+        {"x": "Mon", "y": "Morning", "v": 12}, {"x": "Mon", "y": "Afternoon", "v": 4}, {"x": "Mon", "y": "Evening", "v": 21},
+        {"x": "Tue", "y": "Morning", "v": 3},  {"x": "Tue", "y": "Afternoon", "v": 17}, {"x": "Tue", "y": "Evening", "v": 9},
+        {"x": "Wed", "y": "Morning", "v": 25}, {"x": "Wed", "y": "Afternoon", "v": 8},  {"x": "Wed", "y": "Evening", "v": 14}
+      ],
+      "backgroundColor": "rgba(54, 162, 235, 0.6)",
+      "borderColor": "rgba(54, 162, 235, 1)",
+      "borderWidth": 1,
+      "width": 60,
+      "height": 40
+    }]
+  },
+  "options": {
+    "plugins": { "legend": { "display": false } },
+    "scales": {
+      "x": { "type": "category", "labels": ["Mon", "Tue", "Wed"], "offset": true, "grid": { "display": false } },
+      "y": { "type": "category", "labels": ["Morning", "Afternoon", "Evening"], "offset": true, "grid": { "display": false } }
+    }
+  }
+}
+```
+````
+
+The dataset's `data` array holds `{x, y, v}` points: `x` and `y` place the
+cell on the two category scales, and `v` is the value for that cell. Both
+axes need `type: "category"` scales with an explicit `labels` array, and the
+dataset's `width` and `height` set the size of each cell in pixels.
+
+### Value-dependent shading
+
+The example above uses a single fixed `backgroundColor` for every cell, since
+`advanced-chart` cannot use a function. To actually shade each cell by its
+value — the usual point of a heatmap — use `dataviewjs` instead, where
+`backgroundColor`, `width` and `height` can all be functions of the cell's
+data:
+
+````md
+```dataviewjs
+const days  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const slots = ['Morning','Afternoon','Evening'];
+
+// Replace this with your real data
+const data = [];
+for (const x of days) for (const y of slots) {
+  data.push({ x, y, v: Math.floor(Math.random() * 30) });
+}
+
+window.renderChart({
+  type: 'matrix',
+  data: { datasets: [{
+    label: 'Activity',
+    data,
+    backgroundColor: (ctx) => {
+      const v = ctx.raw?.v ?? 0;
+      return `rgba(54, 162, 235, ${0.1 + (v / 30) * 0.8})`;
+    },
+    borderColor: 'rgba(54, 162, 235, 0.35)',
+    borderWidth: 1,
+    width:  (ctx) => (ctx.chart.chartArea?.width  ?? 0) / days.length  - 4,
+    height: (ctx) => (ctx.chart.chartArea?.height ?? 0) / slots.length - 4,
+  }]},
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { type: 'category', labels: days,  offset: true, grid: { display: false } },
+      y: { type: 'category', labels: slots, offset: true, grid: { display: false } },
+    },
+  },
+}, this.container);
+```
+````
+
+## Treemap
+
+A `treemap` chart divides the plot area into nested rectangles sized by a
+numeric field, useful for showing proportions such as note count per folder
+or per tag.
+
+````json
+```advanced-chart
+{
+  "type": "treemap",
+  "data": {
+    "datasets": [{
+      "label": "Note count",
+      "tree": [
+        {"name": "Journal", "count": 120}, {"name": "Reference", "count": 75},
+        {"name": "Meeting", "count": 45}, {"name": "Idea", "count": 30}, {"name": "Other", "count": 18}
+      ],
+      "key": "count",
+      "borderWidth": 1,
+      "borderColor": "rgba(255,255,255,0.6)",
+      "backgroundColor": "rgba(75, 192, 192, 0.6)",
+      "labels": { "display": true, "align": "center", "position": "middle" }
+    }]
+  },
+  "options": { "plugins": { "legend": { "display": false } } }
+}
+```
+````
+
+Instead of `data`, the dataset takes a `tree` array of arbitrary objects, and
+a `key` naming which field on those objects holds the numeric value used to
+size each tile.
+
+Coloring each tile differently also requires a scriptable `backgroundColor`
+(for example returning a color based on `ctx.raw.count`), so per-tile
+coloring needs the same `dataviewjs` route described above for `matrix`.
+
+## Word Cloud
+
+A `wordCloud` chart lays out words at a size proportional to their weight,
+useful for visualizing tag or word frequency across a set of notes.
+
+````json
+```advanced-chart
+{
+  "type": "wordCloud",
+  "data": {
+    "labels": ["Obsidian", "Chart", "Zettelkasten", "Markdown", "Dataview", "Canvas", "Graph", "Plugin"],
+    "datasets": [{ "label": "Frequency", "data": [64, 52, 44, 38, 30, 24, 20, 16] }]
+  },
+  "options": { "plugins": { "legend": { "display": false } } }
+}
+```
+````
+
+The words themselves go in the top-level `labels` array, and the dataset's
+`data` array gives the size for each word, matched up by position.
