@@ -10,7 +10,7 @@
 > このフォークで upstream から変更したのは次の3点である。
 > 1. Chart.js を 3.9.1 → 4.5.1 に更新（依存ライブラリの更新を含む）
 > 2. 設定画面・コマンド等の日本語ローカライズ
-> 3. チャート種の追加（ヒートマップ、ツリーマップ、ワードクラウド）
+> 3. チャート種の追加（ヒートマップ、ツリーマップ、ワードクラウド、箱ひげ図、エラーバー付き各種、ベン図）
 >
 > 詳細は以下の各節を参照。
 
@@ -27,7 +27,8 @@
 
 | タグ | 内容 |
 | --- | --- |
-| `4.1.0` | 最新。チャート種の追加を含む |
+| `4.2.0` | 最新。箱ひげ図・エラーバー・ベン図を追加 |
+| `4.1.0` | ヒートマップ・ツリーマップ・ワードクラウドを追加 |
 | `4.0.1` | Chart.js 4 化と日本語ローカライズ |
 | `3.9.0-brat.1` | Chart.js 3.9.1 のままの upstream 未改変コード。比較用のベースラインとして配布 |
 
@@ -55,13 +56,18 @@ Chart.js を 4.5.1 に上げ、あわせて `chartjs-chart-sankey` を 0.12 → 
 
 ## チャート種の追加
 
-Chart.js のコミュニティプラグインを 3 つ同梱し、次の種類を使えるようにした。
+Chart.js のコミュニティプラグインを 6 つ同梱し、次の種類を使えるようにした。
 
 | type | 内容 | ライブラリ |
 | --- | --- | --- |
 | `matrix` | ヒートマップ | `chartjs-chart-matrix` |
 | `treemap` | ツリーマップ | `chartjs-chart-treemap` |
 | `wordCloud` | ワードクラウド | `chartjs-chart-wordcloud` |
+| `boxplot` / `violin` | 箱ひげ図 / バイオリン図 | `@sgratzl/chartjs-chart-boxplot` |
+| `barWithErrorBars` / `lineWithErrorBars` / `scatterWithErrorBars` / `polarAreaWithErrorBars` | エラーバー付き各種 | `chartjs-chart-error-bars` |
+| `venn` / `euler` | ベン図 / オイラー図 | `chartjs-chart-venn` |
+
+`sankey`（サンキー図）は upstream の時点から同梱されている。
 
 > [!IMPORTANT]
 > これらは通常の `chart` ブロック（YAML）では使えない。`datasetPrep()` が全データセットに
@@ -125,7 +131,7 @@ Chart.js 4 への更新版は、更新前と同じ型チェックを通過し、
 
 This is a fork of [phibr0/obsidian-charts](https://github.com/phibr0/obsidian-charts) (plugin id `obsidian-charts`), maintained at `akikinyan/obsidian-charts`. It renders Chart.js charts from `chart` and `advanced-chart` code blocks in Obsidian, same as upstream, whose last release was 3.9.0 (January 2024).
 
-This fork adds three things on top of upstream: an upgrade from Chart.js 3.9.1 to 4.5.1 (with the matching `chartjs-chart-sankey` and `chartjs-plugin-annotation` bumps, which renames a few scale options — see [`docusaurus/docs/Chart.js v4 Migration.md`](./docusaurus/docs/Chart.js%20v4%20Migration.md)); Japanese/English UI localisation for the settings, commands, and modal; and three extra chart types — `matrix` (heatmap), `treemap` and `wordCloud` — usable from `advanced-chart` blocks or the `window.renderChart` API.
+This fork adds three things on top of upstream: an upgrade from Chart.js 3.9.1 to 4.5.1 (with the matching `chartjs-chart-sankey` and `chartjs-plugin-annotation` bumps, which renames a few scale options — see [`docusaurus/docs/Chart.js v4 Migration.md`](./docusaurus/docs/Chart.js%20v4%20Migration.md)); Japanese/English UI localisation for the settings, commands, and modal; and six extra chart types — `matrix` (heatmap), `treemap`, `wordCloud`, `boxplot`, the `*WithErrorBars` family and `venn` — usable from `advanced-chart` blocks or the `window.renderChart` API.
 
 It is not on the community plugin store; install it via [BRAT](https://github.com/TfTHacker/obsidian42-brat) using repository path `akikinyan/obsidian-charts`. Its plugin id is identical to the official plugin's, so BRAT will overwrite an existing official install (and vice versa) — test in a separate vault.
 
